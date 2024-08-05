@@ -1,0 +1,22 @@
+---
+# tasks file for packer
+- name: Configure Hashicorp Repository
+  ansible.builtin.deb822_repository:
+    name: hashicorp
+    types: deb
+    uris: "{{ packer_repository_url }}"
+    suites: '{{ ansible_distribution_release }}'
+    components: main
+    architectures: amd64
+    signed_by: "{{ packer_repository_gpg_key }}"
+    state: present
+
+- name: Update Repositories
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Install packer
+  ansible.builtin.apt:
+    name: "{{ packer_package }}"
+    state: "{{ packer_state }}"
